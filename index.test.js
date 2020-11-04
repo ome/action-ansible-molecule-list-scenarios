@@ -1,23 +1,61 @@
-const wait = require('./wait');
-const process = require('process');
-const cp = require('child_process');
-const path = require('path');
+const listscenarios = require("./listscenarios");
+const os = require("os");
 
-test('throws invalid number', async () => {
-  await expect(wait('foo')).rejects.toThrow('milliseconds not a number');
+const fsify = require("fsify")({
+  cwd: os.tmpdir(),
+  persistent: false,
+  force: true,
 });
 
-test('wait 500 ms', async () => {
-  const start = new Date();
-  await wait(500);
-  const end = new Date();
-  var delta = Math.abs(end - start);
-  expect(delta).toBeGreaterThanOrEqual(500);
-});
+test("lists molecule scenarios", async () => {
+  const structure = [
+    {
+      type: fsify.DIRECTORY,
+      name: "root",
+      contents: [
+        {
+          type: fsify.DIRECTORY,
+          name: "molecule",
+          contents: [
+            {
+              type: fsify.DIRECTORY,
+              name: "scenario-dir",
+              contents: [
+                {
+                  type: fsify.FILE,
+                  name: "molecule.yml",
+                  contents: "",
+                },
+              ],
+            },
+            {
+              type: fsify.DIRECTORY,
+              name: "other-dir",
+              contents: [
+                {
+                  type: fsify.FILE,
+                  name: "other.txt",
+                  contents: "",
+                },
+              ],
+            },
+            {
+              type: fsify.FILE,
+              name: "other-file.txt",
+              contents: "",
+            },
+          ],
+        },
+      ],
+    },
+  ];
 
-// shows how the runner will run a javascript action with env / stdout protocol
-test('test runs', () => {
-  process.env['INPUT_MILLISECONDS'] = 500;
-  const ip = path.join(__dirname, 'index.js');
-  console.log(cp.execSync(`node ${ip}`, {env: process.env}).toString());
-})
+  const scenarios = await fsify(structure)
+    .then((structure) => {
+      return structure[0].name;
+    })
+    .then((root) => {
+      return listscenarios(root);
+    });
+  expect(scenarios).toEqual(["scenario-dir"]);
+});

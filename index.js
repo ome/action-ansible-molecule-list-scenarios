@@ -1,18 +1,18 @@
-const core = require('@actions/core');
-const wait = require('./wait');
-
+const core = require("@actions/core");
+const listscenarios = require("./listscenarios");
 
 // most @actions toolkit packages have async methods
 async function run() {
   try {
-    const ms = core.getInput('milliseconds');
-    core.info(`Waiting ${ms} milliseconds ...`);
-
-    core.debug((new Date()).toTimeString()); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
-    await wait(parseInt(ms));
-    core.info((new Date()).toTimeString());
-
-    core.setOutput('time', new Date().toTimeString());
+    const scenarios = await listscenarios(core.getInput("subdir"));
+    // const moleculedir = path.posix.join(core.getInput('subdir'), 'molecule');
+    // const molecule_ymls = await globby(path.posix.join(moleculedir, '*', 'molecule.yml'));
+    core.info(`Found scenarios ${scenarios}`);
+    if (scenarios.length) {
+      core.setOutput("scenarios", JSON.stringify(scenarios));
+    } else {
+      core.setFailed("No scenarios found!");
+    }
   } catch (error) {
     core.setFailed(error.message);
   }

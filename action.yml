@@ -1,13 +1,13 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: "List Molecule scenarios"
+description: "List Ansible Molecule scenarios"
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  subdir:
+    description: "If your molecule directory is not at the top of your repository set this path."
     required: true
-    default: '1000'
+    default: "."
 outputs:
-  time: # output will be available to future steps
-    description: 'The message to output'
+  scenarios:
+    description: "List of Molecule scenarios"
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: "node12"
+  main: "dist/index.js"
