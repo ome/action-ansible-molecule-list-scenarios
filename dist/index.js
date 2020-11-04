@@ -3981,7 +3981,7 @@ const {promisify} = __webpack_require__(1669);
 const fs = __webpack_require__(5747);
 const path = __webpack_require__(5622);
 const fastGlob = __webpack_require__(3664);
-const gitIgnore = __webpack_require__(2069);
+const gitIgnore = __webpack_require__(4777);
 const slash = __webpack_require__(4111);
 
 const DEFAULT_IGNORE = [
@@ -4283,7 +4283,61 @@ module.exports.gitignore = gitignore;
 
 /***/ }),
 
-/***/ 2069:
+/***/ 2408:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+const {Transform} = __webpack_require__(2413);
+
+class ObjectTransform extends Transform {
+	constructor() {
+		super({
+			objectMode: true
+		});
+	}
+}
+
+class FilterStream extends ObjectTransform {
+	constructor(filter) {
+		super();
+		this._filter = filter;
+	}
+
+	_transform(data, encoding, callback) {
+		if (this._filter(data)) {
+			this.push(data);
+		}
+
+		callback();
+	}
+}
+
+class UniqueStream extends ObjectTransform {
+	constructor() {
+		super();
+		this._pushed = new Set();
+	}
+
+	_transform(data, encoding, callback) {
+		if (!this._pushed.has(data)) {
+			this.push(data);
+			this._pushed.add(data);
+		}
+
+		callback();
+	}
+}
+
+module.exports = {
+	FilterStream,
+	UniqueStream
+};
+
+
+/***/ }),
+
+/***/ 4777:
 /***/ ((module) => {
 
 // A simple implementation of make-array
@@ -4883,60 +4937,6 @@ if (
     REGIX_IS_WINDOWS_PATH_ABSOLUTE.test(path)
     || isNotRelative(path)
 }
-
-
-/***/ }),
-
-/***/ 2408:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-const {Transform} = __webpack_require__(2413);
-
-class ObjectTransform extends Transform {
-	constructor() {
-		super({
-			objectMode: true
-		});
-	}
-}
-
-class FilterStream extends ObjectTransform {
-	constructor(filter) {
-		super();
-		this._filter = filter;
-	}
-
-	_transform(data, encoding, callback) {
-		if (this._filter(data)) {
-			this.push(data);
-		}
-
-		callback();
-	}
-}
-
-class UniqueStream extends ObjectTransform {
-	constructor() {
-		super();
-		this._pushed = new Set();
-	}
-
-	_transform(data, encoding, callback) {
-		if (!this._pushed.has(data)) {
-			this.push(data);
-			this._pushed.add(data);
-		}
-
-		callback();
-	}
-}
-
-module.exports = {
-	FilterStream,
-	UniqueStream
-};
 
 
 /***/ }),
