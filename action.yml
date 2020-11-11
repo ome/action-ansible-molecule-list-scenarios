@@ -3,11 +3,11 @@ description: "List Ansible Molecule scenarios"
 inputs:
   subdir:
     description: "If your molecule directory is not at the top of your repository set this path."
-    required: true
+    required: false
     default: "."
 outputs:
   scenarios:
     description: "List of Molecule scenarios"
 runs:
-  using: "node12"
-  main: "dist/index.js"
+  using: node12
+  main: index.js

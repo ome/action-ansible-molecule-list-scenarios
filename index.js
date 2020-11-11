@@ -1,20 +1,40 @@
-const core = require("@actions/core");
-const listscenarios = require("./listscenarios");
+const fs = require("fs");
+const path = require("path");
 
-// most @actions toolkit packages have async methods
+// https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions
+
 async function run() {
   try {
-    const scenarios = await listscenarios(core.getInput("subdir"));
-    // const moleculedir = path.posix.join(core.getInput('subdir'), 'molecule');
-    // const molecule_ymls = await globby(path.posix.join(moleculedir, '*', 'molecule.yml'));
-    core.info(`Found scenarios ${scenarios}`);
+    var scenarios = [];
+    const subdir = (process.env["INPUT_SUBDIR"] || ".").trim();
+    const moleculedir = path.posix.join(subdir, "molecule");
+    const items1 = fs.readdirSync(moleculedir);
+    items1.forEach((i) => {
+      const pathi = path.posix.join(moleculedir, i);
+      if (fs.statSync(pathi).isDirectory()) {
+        const items2 = fs.readdirSync(pathi);
+        items2.forEach((j) => {
+          if (j == "molecule.yml") {
+            if (!/^[\w]+$/.exec(i)) {
+              throw `Unexpected scenario name: ${i}`;
+            }
+            scenarios.push(i);
+          }
+        });
+      }
+    });
+    process.stdout.write(`Found scenarios ${scenarios}\n`);
+
     if (scenarios.length) {
-      core.setOutput("scenarios", JSON.stringify(scenarios));
+      process.stdout.write(
+        `::set-output name=scenarios::${JSON.stringify(scenarios)}\n`
+      );
     } else {
-      core.setFailed("No scenarios found!");
+      throw "No scenarios found!";
     }
   } catch (error) {
-    core.setFailed(error.message);
+    process.stdout.write(`::error ${error.toString()}\n`);
+    process.exitCode = 1;
   }
 }
 

@@ -18,45 +18,5 @@ TODO
 
 ## Developer notes
 
-Install the dependencies:
-
-```bash
-$ npm install
-```
-
-Build the typescript, run the formatter and linter:
-
-```bash
-$ npm run build && npm run format && npm run lint
-```
-
-Package the code for distribution (uses [ncc](https://github.com/zeit/ncc)):
-
-```bash
-$ npm run package
-```
-
-This is required because JavaScript GitHub actions must be self contained with all their dependencies.
-
-Run the tests :heavy_check_mark:
-
-```bash
-$ npm test
-```
-
-Shortcut:
-
-```bash
-$ npm run all
-```
-
-Actions are run from GitHub repos so you must checkin the packed `dist` folder:
-
-```bash
-$ npm run all
-$ git add dist
-$ git commit
-$ git push origin main
-```
-
-The CI check will fail if the `dist` directory is not up to date.
+This is a self-contained javascript action.
+No bundling step is required.
