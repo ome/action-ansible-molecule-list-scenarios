@@ -15,7 +15,7 @@ async function run() {
         const items2 = fs.readdirSync(pathi);
         items2.forEach((j) => {
           if (j == "molecule.yml") {
-            if (!/^[\w]+$/.exec(i)) {
+            if (!/^[\w][\w-]*$/.exec(i)) {
               throw `Unexpected scenario name: ${i}`;
             }
             scenarios.push(i);
