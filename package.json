@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/ome/action-ansible-molecule-list-scenarios",
   "dependencies": {
-    "eslint": "^7.13.0",
+    "eslint": "^8.0.1",
     "prettier": "^2.1.2"
   }
 }
