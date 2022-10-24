@@ -27,7 +27,7 @@ async function run() {
 
     if (scenarios.length) {
       process.stdout.write(
-        `::set-output name=scenarios::${JSON.stringify(scenarios)}\n`
+        `scenarios=${JSON.stringify(scenarios)}\n` >> $GITHUB_OUTPUT
       );
     } else {
       throw "No scenarios found!";
