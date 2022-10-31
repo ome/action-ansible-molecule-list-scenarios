@@ -26,7 +26,10 @@ async function run() {
     process.stdout.write(`Found scenarios ${scenarios}\n`);
 
     if (scenarios.length) {
-      fs.appendFileSync(process.env.GITHUB_OUTPUT, `scenarios=${JSON.stringify(scenarios)}\n`);
+      fs.appendFileSync(
+        process.env.GITHUB_OUTPUT,
+        `scenarios=${JSON.stringify(scenarios)}\n`
+      );
     } else {
       throw "No scenarios found!";
     }
